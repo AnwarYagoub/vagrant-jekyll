@@ -1,0 +1,11 @@
+# rvm options
+rvm_gpg_key: D39DC0E3
+rvm_installer_script_url: https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer
+rvm_version: stable
+
+# ruby options
+install_rubies: false
+rubies:
+  - 2.3.1
+set_default_ruby_version: true
+default_ruby_version: 2.3.1

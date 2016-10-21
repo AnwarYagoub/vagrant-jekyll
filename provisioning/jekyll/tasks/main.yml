@@ -1,20 +1,10 @@
 ---
 
-- name: "Install Ruby 2.0"
-  become: yes
-  apt:
-    name="{{ item }}"
-    state="present"
-    update_cache="yes"
-  with_items:
-    - ruby2.0
-    - ruby2.0-dev
+- name: "Copy installer script"
+  template:
+    src="jekyll-installer.sh.j2"
+    dest="~/jekyll-installer.sh"
+    mode="0700"
 
-- name: "Install Jekyll"
-  gem:
-    name="{{ item }}"
-    state="present"
-    executable="/usr/bin/gem2.0"
-  with_items:
-    - jekyll
-    - bundler
+- name: "Install jekyll"
+  shell: ~/jekyll-installer.sh

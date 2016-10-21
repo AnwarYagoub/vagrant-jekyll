@@ -1,0 +1,11 @@
+# ruby options
+install_rubies: true
+rubies:
+  - 2.3.1
+set_default_ruby_version: true
+default_ruby_version: 2.3.1
+
+# gem options
+gems:
+  - bundler
+  - jekyll

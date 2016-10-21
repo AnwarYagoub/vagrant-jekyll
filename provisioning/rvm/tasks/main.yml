@@ -1,0 +1,52 @@
+---
+
+- name: "Check if RVM is installed"
+  shell: which rvm
+  register: rvm_status
+  changed_when: false
+  failed_when: false
+
+- name: "Check if GPG already existed"
+  shell: gpg --list-keys | grep {{ rvm_gpg_key }}
+  register: gpg_key_status
+  changed_when: false
+  when: rvm_status.rc != 0
+  failed_when: false
+
+- name: "Add RVM GPG key"
+  shell: gpg --keyserver hkp://keys.gnupg.net --recv-keys {{ rvm_gpg_key }}
+  when: rvm_status.rc != 0 and gpg_key_status.rc != 0
+
+- name: "Download RVM installer script"
+  get_url:
+    url="{{ rvm_installer_script_url }}"
+    dest="~/rvm-installer.sh"
+    mode="0755"
+  when: rvm_status.rc != 0
+
+- name: "Install RVM"
+  shell: ~/rvm-installer.sh {{ rvm_version }} && source /home/vagrant/.rvm/scripts/rvm
+  when: rvm_status.rc != 0
+  args:
+    executable: /bin/bash
+
+- name: "Add RMV script to bashrc"
+  lineinfile:
+    dest="~/.bashrc"
+    line="source $HOME/.rvm/scripts/rvm"
+
+- name: "Install RVM requirments"
+  shell: $HOME/.rvm/bin/rvm requirements
+  args:
+    executable: /bin/bash
+
+- name: "Instal Ruby"
+  shell: $HOME/.rvm/bin/rvm install {{ item }}
+  args:
+    executable: /bin/bash
+  with_items: "{{ rubies }}"
+  when: install_rubies == true
+
+- name: "Set default Ruby version to {{ default_ruby_version }}"
+  shell: $HOME/.rvm/bin/rvm use {{ default_ruby_version }} --default
+  when: set_default_ruby_version == true and install_rubies == true

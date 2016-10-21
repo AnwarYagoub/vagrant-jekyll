@@ -1,0 +1,16 @@
+#!/bin/bash
+
+export PATH="$PATH:$HOME/.rvm/bin"
+source $HOME/.rvm/scripts/rvm
+
+{% if install_rubies == true %}
+rvm install {{ rubies | join(' ') }}
+{% endif %}
+
+{% if set_default_ruby_version == true %}
+rvm use {{ default_ruby_version }} --default
+{% else %}
+rvm use {{ default_ruby_version }}
+{% endif %}
+
+gem install {{ gems | join(' ') }}
