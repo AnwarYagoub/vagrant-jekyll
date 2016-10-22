@@ -1,0 +1,27 @@
+---
+
+- name: "Check if swap file exists"
+  stat:
+    path="{{ swap_file_path }}"
+  register: swapfile_status
+
+- name: "Create swap file"
+  become: yes
+  shell: dd if=/dev/zero of={{ swap_file_path }} bs={{ block_size }} count={{ count }}
+  when: swapfile_status.stat.exists == false
+
+- name: "Set up swap area of {{ swap_file_path }} file"
+  become: yes
+  shell: mkswap {{ swap_file_path }}
+  when: swapfile_status.stat.exists == false
+
+- name: "Use swap file"
+  become: yes
+  shell: swapon {{ swap_file_path }}
+  when: swapfile_status.stat.exists == false
+
+- name: "add swap file to /etc/fstab"
+  become: yes
+  lineinfile:
+    dest="/etc/fstab"
+    line="{{ swap_file_path }}     swap     swap   defaults   0  0"

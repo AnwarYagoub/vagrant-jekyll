@@ -1,0 +1,3 @@
+block_size: 1MB
+count: 1024
+swap_file_path: /swap
